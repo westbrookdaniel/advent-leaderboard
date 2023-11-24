@@ -1,0 +1,31 @@
+{
+  "name": "core",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "conc \"bun run dev:*\"",
+    "dev:server": "bun --watch run core/serve.ts",
+    "dev:styles": "tailwindcss -i src/styles.css -o public/styles.css --watch",
+    "serve": "bun run core/serve.ts",
+    "db:generate": "drizzle-kit generate:pg",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "concurrently": "^8.2.2",
+    "drizzle-kit": "^0.20.4",
+    "tailwindcss": "^3.3.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.29.0",
+    "glob": "^10.3.10",
+    "postgres": "^3.4.3",
+    "radix3": "^1.1.0",
+    "unstorage": "^1.10.1",
+    "zod": "^3.22.4"
+  }
+}
