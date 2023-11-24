@@ -1,40 +1,36 @@
-import { schema, db } from "~/db";
-import { eq } from "drizzle-orm";
+import { Entry, sql } from "~/db";
 
-type CreateEntryInput = Pick<schema.Entry, "name" | "time" | "dayId">;
-type UpdateEntryInput = Pick<schema.Entry, "name" | "time">;
+type CreateEntryInput = Pick<Entry, "name" | "time" | "day_id">;
+type UpdateEntryInput = Pick<Entry, "name" | "time">;
 
 export const entry = {
-  allForDay: async (dayId: number) => {
-    return db.query.entry.findMany({
-      where: eq(schema.entry.dayId, dayId),
-    });
+  allForDay: async (dayId: number): Promise<Entry[]> => {
+    return sql`select * from entries where day_id = ${dayId}`;
   },
-  all: async () => {
-    return db.query.entry.findMany();
+  all: async (): Promise<Entry[]> => {
+    return sql`select * from entries`;
   },
-  one: async (id: number) => {
-    return db.query.entry.findFirst({
-      where: eq(schema.entry.id, id),
-    });
+  one: async (id: number): Promise<Entry> => {
+    const entries = await sql`select * from entries where id = ${id}`;
+    return entries[0] as Entry;
   },
-  create: async (input: CreateEntryInput) => {
-    const newEntries: schema.Entry[] = await db
-      .insert(schema.entry)
-      .values({ ...input, updatedAt: new Date(), createdAt: new Date() })
-      .returning();
+  create: async (input: CreateEntryInput): Promise<Entry> => {
+    const newEntries: Entry[] = await sql`
+      insert into entries ${sql(input, "name", "time", "day_id")}
+      returning *
+    `;
     return newEntries[0];
   },
-  update: async (id: number, input: UpdateEntryInput) => {
-    const newEntries: schema.Entry[] = await db
-      .update(schema.entry)
-      .set({ ...input, updatedAt: new Date() })
-      .where(eq(schema.entry.id, id))
-      .returning();
+  update: async (id: number, input: UpdateEntryInput): Promise<Entry> => {
+    const newEntries: Entry[] = await sql`
+      update entries ${sql(input, "name", "time")}
+      where id = ${id}
+      returning *
+    `;
     return newEntries[0];
   },
   delete: async (id: number) => {
-    await db.delete(schema.entry).where(eq(schema.entry.id, id));
+    await sql`delete from entries where id = ${id}`;
     return { id };
   },
 };

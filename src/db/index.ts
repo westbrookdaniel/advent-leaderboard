@@ -1,14 +1,38 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
-import * as schema from "~/db/schema";
 
 const connectionString = Bun.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is not set");
-const sql = postgres(connectionString, { max: 1 });
+export const sql = postgres(connectionString);
 
-export const db = drizzle(sql, { schema });
+export type Entry = {
+  id: number;
+  name: string;
+  time: string;
+  created_at: string;
+  updated_at: string;
+  day_id: number;
+};
 
-export * as schema from "~/db/schema";
+export type Day = {
+  id: number;
+  date: string;
+};
 
-await migrate(db, { migrationsFolder: "drizzle" });
+// Migrations
+await sql`
+  CREATE TABLE IF NOT EXISTS days (
+    id SERIAL PRIMARY KEY,
+    date DATE NOT NULL
+  );
+`;
+
+await sql`
+  CREATE TABLE IF NOT EXISTS entries (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    time TIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    day_id INTEGER NOT NULL REFERENCES days (id)
+  );
+`;

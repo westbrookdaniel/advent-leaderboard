@@ -1,26 +1,27 @@
-import { schema, db } from "~/db";
-import { eq } from "drizzle-orm";
-
-type CreateDayInput = Pick<schema.Day, "date">;
+import { Day, sql } from "~/db";
 
 export const day = {
-  all: async () => {
-    return db.query.entry.findMany();
+  today: async (): Promise<Day> => {
+    const today = new Date().toISOString().slice(0, 10);
+    const entries = await sql`select * from days where date = ${today}`;
+    return entries[0] as Day;
   },
-  one: async (id: number) => {
-    return db.query.entry.findFirst({
-      where: eq(schema.entry.id, id),
-    });
+  all: async (): Promise<Day[]> => {
+    return sql`select * from days`;
   },
-  create: async (input: CreateDayInput) => {
-    const newEntries: schema.Day[] = await db
-      .insert(schema.day)
-      .values({ ...input })
-      .returning();
+  one: async (id: number): Promise<Day> => {
+    const entries = await sql`select * from days where id = ${id}`;
+    return entries[0] as Day;
+  },
+  create: async (date: Date): Promise<Day> => {
+    const newEntries: Day[] = await sql`
+      insert into days ${sql({ date: date.toISOString().slice(0, 10) }, "date")}
+      returning *
+    `;
     return newEntries[0];
   },
   delete: async (id: number) => {
-    await db.delete(schema.day).where(eq(schema.day.id, id));
+    await sql`delete from days where id = ${id}`;
     return { id };
   },
 };
