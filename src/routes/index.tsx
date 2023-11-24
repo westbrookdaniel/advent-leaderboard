@@ -13,7 +13,7 @@ router.view.GET("/", async () => {
     <Layout>
       <main class="h-screen w-screen grid place-content-center text-center bg-neutral-800 text-neutral-400">
         <h1 class="text-6xl font-thin mb-16 text-neutral-700">
-          GLX Advent of Code Leaderboard
+          Advent of Code Leaderboard
         </h1>
         <Form />
 
