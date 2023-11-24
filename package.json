@@ -6,7 +6,8 @@
     "dev": "conc \"bun run dev:*\"",
     "dev:server": "bun --watch run core/serve.ts",
     "dev:styles": "tailwindcss -i src/styles.css -o public/styles.css --watch",
-    "serve": "bun run core/serve.ts",
+    "build": "tailwindcss -i src/styles.css -o public/styles.css",
+    "start": "bun run core/serve.ts",
     "db:up": "docker-compose up -d",
     "db:down": "docker-compose down"
   },
