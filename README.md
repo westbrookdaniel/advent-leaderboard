@@ -33,21 +33,3 @@ bun install
 bun db:up # starts db, requires docker
 bun dev
 ```
-
-You can find the views and routes co-located in the routes folder, these will
-be automatically imported. Here are some other notable folders:
-
-```md
-- core (the frameowork code)
-- drizzle (db migrations live here)
-- public (will be served statically)
-- src
-  - api (abstraction for data access for reusability and auditing)
-  - components (components for your routes)
-  - db (drizzle client and schema)
-  - routes (views/routes live here)
-    state.ts (features unstorage stores, useful for caching)
-    styles.css (will be built to public/styles.css by tailwindcss)
-```
-
-Happy hacking!
